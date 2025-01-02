@@ -1,0 +1,47 @@
+' found on https://github.com/td-adm/
+'
+' This ADM file allows specyfying Autoconfig url on all old clinets with all IE versions
+' 
+' To force using PAC file DISABLE following options: Enable Proxy, Enable Autodetect.
+' This is counterintuitive, but it disables direct proxy and forces PAC file.
+'
+
+CLASS MACHINE
+ 
+CATEGORY !!IeConfig 
+    KEYNAME "SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings" 
+     POLICY !!EnableProxy
+        EXPLAIN !!HelpEnableProxy
+        VALUENAME "ProxyEnable" 
+            VALUEON 1 
+            VALUEOFF 0 
+    END POLICY 
+     POLICY !!AutoDetect
+        EXPLAIN !!HelpAutoDetect
+        VALUENAME "AutoDetect" 
+            VALUEON 1 
+            VALUEOFF 0 
+    END POLICY
+     POLICY ProxyOverride
+        EXPLAIN ProxyOverrideSetting
+	PART "ProxyOverride" EDITTEXT
+        	VALUENAME "ProxyOverride" 
+		DEFAULT "<local>"
+	END PART
+    END POLICY 
+     POLICY ProxyServerURL
+        EXPLAIN ProxyServerSetting
+	PART "ProxyServer" EDITTEXT
+        	VALUENAME "AutoConfigUrl" 
+		DEFAULT "http://myproxyserver/proxy.pac"
+	END PART
+    END POLICY 
+END CATEGORY
+
+[strings]
+IeConfig="IE Configuration"
+EnableProxy="Enable Proxy"
+HelpEnableProxy="Enables Proxy setting (0 = PAC file)"
+AutoDetect="Enable Autodetect"
+HelpAutoDetect="Enables Autodetect"
+

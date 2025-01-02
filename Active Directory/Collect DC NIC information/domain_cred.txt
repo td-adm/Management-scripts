@@ -1,0 +1,2 @@
+#Format: domainFQDN, IP of DNS (if domain resolvabe, leave blank), DOMAIN\login, password
+mydomain.com,192.168.1.200,MYDOMAIN\this_accounts,secretPassword

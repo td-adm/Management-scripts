@@ -1,0 +1,11 @@
+Found on https://github.com/td-adm/
+
+###
+List deleted users (no AD module required! uses only ADSI)
+###
+$data = @()            
+[ADSISEARCHER]$search = "(&(isDeleted=TRUE)(objectclass=user))"            
+$search.tombstone = $true            
+$results = $search.Findall()          
+foreach ($result in $results) {$data += $result.Properties |select @{N="Name"; E={$_.name}}, @{N="lastknownparent"; E={$_.lastknownparent}}, @{N="samaccountname"; E={$_.samaccountname}}, @{N="whenchanged"; E={$_.whenchanged}}; } 
+$data

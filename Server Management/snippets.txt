@@ -1,0 +1,39 @@
+Found on https://github.com/td-adm/
+
+
+###
+List all GPO in domain:
+###
+powershell Import-Module grouppolicy;get-gpo -All ^| ft DisplayName > GPOList.txt
+start GPOList.txt
+
+###
+Show all services on remote server that are started automatically and are not running
+###
+set /P comp_name=Please enter computer name: 
+wmic /node:%comp_name% SERVICE where (state!="running" AND StartMode="Auto") GET caption, name, state
+
+###
+Show updating view of top CPU processes and ones that have over 2GB of ram usage
+###
+set /P comp_name=Please enter computer name: 
+:check_top_cpu_load_loop_l
+cls
+wmic /node:%comp_name% path Win32_PerfFormattedData_PerfProc_Process where "PercentProcessorTime>'1' OR WorkingSet>'268435456'" get Name,PercentProcessorTime,WorkingSet
+ping 0 -n 2 >nul
+goto check_top_cpu_load_loop_l
+
+###
+Dump boot times of multiple servers to file
+###
+Get-Content serverlist.txt | ForEach-Object{ Get-WmiObject win32_operatingsystem -computername $_ | select csname, @{LABEL='LastBootUpTime';EXPRESSION={$_.ConverttoDateTime($_.lastbootuptime)}} }
+
+###
+Quick and easy last interactive logon to server by profile update
+###
+Get-ChildItem \\SERVER01\c$\Users\*\ntuser.dat -Force | ft lastwritetime,@{Name="User";Expression={$_.DirectoryName.Split("\")[5]}} -AutoSize
+
+###
+Collect printer information from servers
+###
+Get-WmiObject -Class Win32_Printer -ComputerName SERVER_PRINT01,SERVER_PRINT02,SERVER_PRINT03,SERVER_PRINT04 | ft Name,Location,SystemName -auto > .\printers.txt

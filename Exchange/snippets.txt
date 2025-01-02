@@ -1,0 +1,15 @@
+Found on https://github.com/td-adm/
+
+###
+Monitor mailbox size (usefull during archiving or exporting process)
+###
+$alias=USERNAME; while (0 -eq 0) {$x=(Get-MailboxStatistics $alias).TotalItemSize; $diff=($tmp.Value.toMB())-($x.Value.toMB()); if ($tmp -ne $x) {$gb=$x.Value.ToMB(); $now=[System.DateTime]::Now; Write-host "$now : $diff $gb ";$tmp=$x;};Start-Sleep -s 3;}
+
+Sample output:
+04/15/2018 13:42:37 : 2 6772
+04/15/2018 13:42:43 : 0 6772
+04/15/2018 13:42:46 : 8 6764
+
+<date> : <changeMB> <sizeMB>
+
+

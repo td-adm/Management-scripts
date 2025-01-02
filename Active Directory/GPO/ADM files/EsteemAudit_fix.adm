@@ -1,0 +1,38 @@
+' found on https://github.com/td-adm/
+'
+' This GPO disables smart card logon preventing EsteemAudit vulnerability in gpkcsp.dll on all Windows NT 5.X+ (so Windows 2000, 2003, XP)
+'
+' As this systems didn't received proper patch this is very usefull as mitigation.
+' I recommend applying this in GPO with following WMI filter (namespace root\CIMv2): SELECT Version FROM Win32_OperatingSystem WHERE Version like "5.%"
+'
+CLASS MACHINE
+ 
+CATEGORY "EsteemAudit vulnerability fix"
+KEYNAME "SOFTWARE\Microsoft\Cryptography\Defaults\Provider\Gemplus GemSAFE Card CSP v1.0"
+ 
+POLICY "EsteemAudit vulnerability fix part 1"
+EXPLAIN !!explain
+VALUENAME "Image Path"
+VALUEON DELETE
+VALUEOFF "gpkcsp.dll"
+END POLICY
+
+POLICY "EsteemAudit vulnerability fix part 2"
+EXPLAIN !!explain
+VALUENAME "Type"
+VALUEON DELETE
+VALUEOFF NUMERIC 1
+END POLICY
+
+POLICY "EsteemAudit vulnerability fix part 3"
+EXPLAIN !!explain
+VALUENAME "SigInFile"
+VALUEON DELETE
+VALUEOFF NUMERIC 0
+END POLICY
+ 
+END CATEGORY
+
+
+[strings]
+explain="Enabling will fix vulnerability, disabling will apply default values(enable vulnerability), use Not configured instead."

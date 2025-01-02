@@ -1,0 +1,84 @@
+'Script from https://github.com/td-adm/ based on examples from Microsoft GPMC scripts https://www.microsoft.com/en-us/download/details.aspx?id=21895
+<job>
+<script language="JScript" src="Lib_CommonGPMCFunctions.js"/>
+<script language="VBScript">
+Const GROUP = "Authenticated Users" 
+
+Dim gpms, gpmsDomain, gpmsGPO, gpmsSecInfo
+Dim gpmsConstants, gpmsPerm
+
+Set GPM = CreateObject("GPMgmt.GPM")
+Set Constants = GPM.GetConstants()
+
+Dim szDomainName : szDomainName = ""
+
+If UCase(Right(WScript.FullName,11)) = "WSCRIPT.EXE" Then
+	WScript.Echo "Please use CSCRIPT to execute this."
+	WScript.Quit(-1)
+End If
+
+If WScript.Arguments.Named.Exists("Domain") Then
+	szDomainName = WScript.Arguments.Named("Domain")
+End If
+
+	'If blank - current domain
+If szDomainName = "" Then
+	szDomainName = GetDNSDomainForCurrentUser()
+End If
+
+
+Dim GPMDomain
+Set GPMDomain = GPM.GetDomain(szDomainName,"", Constants.UseAnyDC)
+
+'List GPOs
+Dim GPMSearchCriteria
+Set GPMSearchCriteria = GPM.CreateSearchCriteria
+Dim GPOList
+Set GPOList = GPMDomain.SearchGPOs(GPMSearchCriteria)
+
+Dim GPMGPO
+
+WScript.Echo GPOList.Count & " GPOs found in " & szDomainName & " domain." & vbCRLF
+WScript.Echo "Adding Read permissions for " & GROUP & " on following GPOs:" & vbCRLF
+
+For Each GPMGPO in GPOList	
+		ApplyPerm(GPMGPO)
+Next
+
+Function ApplyPerm(GPMGPO)
+
+WScript.Echo GPMGPO.DisplayName
+
+Set gpms = CreateObject("GPMgmt.GPM")
+Set gpmsDomain = gpms.GetDomain (szDomainName, "", 0)
+Set gpmsGPO = gpmsDomain.GetGPO (GPMGPO.ID)
+Set gpmsConstants = gpms.GetConstants
+
+'Create read and apply perm for group
+Set gpmsPerm = gpms.CreatePermission(GROUP, gpmsConstants.permGPORead, TRUE)
+
+'Retrieve all permissions for GPO
+Set gpmsSecInfo = gpmsGPO.GetSecurityInfo()
+
+'Add new group's permissions and commit changes
+gpmsSecInfo.Add gpmsPerm
+gpmsGPO.SetSecurityInfo gpmsSecInfo
+
+End Function
+</script>
+<runtime>
+<description>
+This script is for updating GPO permissions to comply with MS16-072 https://docs.microsoft.com/en-us/security-updates/securitybulletins/2016/ms16-072
+This is for use on Windows 2000 and 2003 domain controllers that don't have PowerShell installed.
+
+Adds 'Read' right for Authenticated Users on all GPOs in domain.
+Preferably run on PDC emulator to ensure that no errors with SYSVOL permissions will be there before it will replicate to all DCs. 
+
+Requires Lib_CommonGPMCFunctions.js in same folder (can be found in Program Files\GPMC\Scripts after installing GPMC https://www.microsoft.com/en-us/download/details.aspx?id=21895).
+
+</description>
+<example>
+Example: ListAllGPOs.wsf [/domain:domain.com]
+</example>
+</runtime>
+</job>

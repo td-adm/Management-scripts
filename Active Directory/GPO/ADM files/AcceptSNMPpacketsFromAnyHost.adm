@@ -1,0 +1,59 @@
+' found on https://github.com/td-adm/
+'
+' If you enable all values in this policy it will enforce accepting SNMP packets from any host.
+' This forces default configuration after setting this on server in another way. There is no way to remove keys in ADM file, so you have to specify each values like below.
+' To not accept any SNMP packets disable fist one and keep rest enabled.
+'
+CLASS MACHINE
+CATEGORY "SNMP Custom ADM"
+KEYNAME "SYSTEM\CurrentControlSet\services\SNMP\Parameters\PermittedManagers"
+POLICY "Force: Accept SNMP packets from any host"
+EXPLAIN "Enable and mark all checkboxes"
+PART "Remove 1st" CHECKBOX
+        VALUENAME "1" 
+            VALUEON DELETE
+            VALUEOFF "localhost"
+END PART
+PART "Remove 2nd" CHECKBOX
+        VALUENAME "2" 
+            VALUEON DELETE
+            VALUEOFF ""
+END PART
+PART "Remove 3rd" CHECKBOX
+        VALUENAME "3" 
+            VALUEON DELETE
+            VALUEOFF ""
+END PART
+PART "Remove 4th" CHECKBOX
+        VALUENAME "4" 
+            VALUEON DELETE
+            VALUEOFF ""
+END PART
+PART "Remove 5th" CHECKBOX
+        VALUENAME "5" 
+            VALUEON DELETE
+            VALUEOFF ""
+END PART
+PART "Remove 6th" CHECKBOX
+        VALUENAME "6" 
+            VALUEON DELETE
+            VALUEOFF ""
+END PART
+PART "Remove 7th" CHECKBOX
+        VALUENAME "7" 
+            VALUEON DELETE
+            VALUEOFF ""
+END PART
+PART "Remove 8th" CHECKBOX
+        VALUENAME "8" 
+            VALUEON DELETE
+            VALUEOFF ""
+END PART
+PART "Remove 9th" CHECKBOX
+        VALUENAME "9" 
+            VALUEON DELETE
+            VALUEOFF ""
+END PART
+END POLICY
+END CATEGORY
+
